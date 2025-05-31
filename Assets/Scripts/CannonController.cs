@@ -7,9 +7,9 @@ public class CannonController : MonoBehaviour
     public float desiredBarrelPitch = 0f;
     [Range(-110, 110)]
     public float desiredPlatformYaw = 0f;
+    
     public float muzzleSpeed = 20;
-    public float aimingDuration = 1.5f;
-    public float fireDelay = 1f;
+    public float aimingDuration = 1f;
     public float barrelPitchSpeed = 10f;
     public float platformYawSpeed = 10f;
     
@@ -20,7 +20,6 @@ public class CannonController : MonoBehaviour
     [SerializeField] private Transform barrelSwivelTransform;
     [SerializeField] private Transform cannonBallSpawnTransform;
     
-    private bool _waitingToShoot;
     private float _latestDesiredBarrelPitch;
     private float _latestDesiredPlatformYaw;
     private float _elapsedAimTime;
@@ -44,27 +43,21 @@ public class CannonController : MonoBehaviour
         {
             _latestDesiredBarrelPitch = desiredBarrelPitch;
             _latestDesiredPlatformYaw = desiredPlatformYaw;
-            
-            if (!_waitingToShoot)
-            {
-                _waitingToShoot = true;
-                _elapsedAimTime = 0;
-            }
         }
 
-        if (_waitingToShoot)
-        {
-            SetBarrelPitch(Mathf.LerpAngle(barrelSwivelTransform.localEulerAngles.x, _latestDesiredBarrelPitch, Mathf.Clamp01(Time.deltaTime * barrelPitchSpeed)));
-            SetCannonYaw(Mathf.LerpAngle(transform.localEulerAngles.y, _latestDesiredPlatformYaw, Mathf.Clamp01(Time.deltaTime * platformYawSpeed)));
-
-            if (_elapsedAimTime >= aimingDuration + fireDelay)
-            {
-                Fire();
-                _waitingToShoot = false;
-            }
-        }
         
-        _elapsedAimTime += Time.deltaTime;
+        SetBarrelPitch(Mathf.LerpAngle(barrelSwivelTransform.localEulerAngles.x, _latestDesiredBarrelPitch, Mathf.Clamp01(Time.deltaTime * barrelPitchSpeed)));
+        SetCannonYaw(Mathf.LerpAngle(transform.localEulerAngles.y, _latestDesiredPlatformYaw, Mathf.Clamp01(Time.deltaTime * platformYawSpeed)));
+
+        if (_elapsedAimTime >= aimingDuration)
+        {
+            Fire();
+            _elapsedAimTime = 0;
+        }
+        else
+        {
+            _elapsedAimTime += Time.deltaTime;
+        }
     }
     
     private void SetBarrelPitch(float pitch) => barrelSwivelTransform.localRotation = Quaternion.Euler(new Vector3(pitch, 0, 90));

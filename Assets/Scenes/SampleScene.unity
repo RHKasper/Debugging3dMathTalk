@@ -700,6 +700,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1315051685152247593, guid: cb546f79ddf3c3d4aad7900a8278a17e, type: 3}
+      propertyPath: aimingDuration
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2360377059339909789, guid: cb546f79ddf3c3d4aad7900a8278a17e, type: 3}
       propertyPath: m_Name
       value: Cannon
