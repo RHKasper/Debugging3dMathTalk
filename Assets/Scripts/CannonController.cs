@@ -5,7 +5,7 @@ public class CannonController : MonoBehaviour
     [Header("Settings")]
     [Range(-89, 15)]
     public float desiredBarrelPitch = 0f;
-    [Range(-110, 30)]
+    [Range(-110, 110)]
     public float desiredPlatformYaw = 0f;
     public float muzzleSpeed = 20;
     public float aimingDuration = 1.5f;
@@ -16,6 +16,7 @@ public class CannonController : MonoBehaviour
     
     [Header("Internal Refs")]
     [SerializeField] private Transform barrelSwivelTransform;
+    [SerializeField] private Transform cannonBallSpawnTransform;
     
     private bool _waitingToShoot;
     private float _latestDesiredBarrelPitch;
@@ -87,7 +88,7 @@ public class CannonController : MonoBehaviour
 
             if (_elapsedAimTime >= aimingDuration + fireDelay)
             {
-                Debug.Log("FIRE");
+                Fire();
                 _waitingToShoot = false;
             }
         }
@@ -97,4 +98,11 @@ public class CannonController : MonoBehaviour
     
     private void SetBarrelPitch(float pitch) => barrelSwivelTransform.localRotation = Quaternion.Euler(new Vector3(pitch, 0, 90));
     private void SetCannonYaw(float yaw) => transform.localRotation = Quaternion.Euler(new Vector3(0, yaw, 0));
+
+    private void Fire()
+    {
+        var cannonBall = Instantiate(cannonBallPrefab);
+        cannonBall.transform.SetPositionAndRotation(cannonBallSpawnTransform.position, cannonBallSpawnTransform.rotation);
+        cannonBall.linearVelocity = cannonBallSpawnTransform.forward * muzzleSpeed;
+    }
 }

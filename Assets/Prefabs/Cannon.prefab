@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 446420110515531663}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.7071067, w: 0.70710695}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0.3399048, y: 16.799995, z: -1.9500122}
   m_LocalScale: {x: 5, y: 16.037354, z: 5}
   m_ConstrainProportionsScale: 0
@@ -138,7 +138,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 554, y: 73.6, z: 331}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.07140261, y: 0.07140261, z: 0.07140261}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6491961912590463272}
@@ -158,11 +158,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 446434c67c173334ba5ddeceec47dc9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  barrelPitch: 0
-  platformYaw: 0
+  desiredBarrelPitch: 0
+  desiredPlatformYaw: 0
   muzzleSpeed: 20
-  cannonBallPrefab: {fileID: 0}
+  aimingDuration: 1.5
+  fireDelay: 1
+  cannonBallPrefab: {fileID: 5083186613206829754, guid: d38f1b973e4cc39449ee1d777ff5774b, type: 3}
   barrelSwivelTransform: {fileID: 6346686364546917707}
+  cannonBallSpawnTransform: {fileID: 8198264937015715714}
 --- !u!1 &3022441439054967432
 GameObject:
   m_ObjectHideFlags: 0
@@ -191,8 +194,8 @@ Transform:
   m_GameObject: {fileID: 3022441439054967432}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 80, y: 1, z: 80}
+  m_LocalPosition: {x: 0, y: -76.4, z: 0}
+  m_LocalScale: {x: 80, y: 76.51957, z: 80}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5690222009559956063}
@@ -228,7 +231,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 5c3e7eeaad4706c42a6b8247089d9859, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
