@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 public class CannonAimer : MonoBehaviour
 {
-    [SerializeField] private Camera camera;
+    [SerializeField] private new Camera camera;
     [SerializeField] private CannonController cannon;
     [SerializeField] private Transform target;
     
@@ -18,40 +18,21 @@ public class CannonAimer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 deltaPosition = cannon.GetCannonBallSpawnTransform().position - target.position;
+        Physics.Raycast(camera.ScreenPointToRay(Mouse.current.position.ReadValue()), out var hit, 1000, _layerMask);
+        Vector3 targetPosition = hit.point;
+        Vector3 deltaPosition = cannon.GetCannonBallSpawnTransform().position - targetPosition;
         
         // calculate yaw
-        float yaw = Quaternion.LookRotation(target.position - cannon.transform.position, Vector3.up).eulerAngles.y;
+        float yaw = Quaternion.LookRotation(targetPosition - cannon.transform.position, Vector3.up).eulerAngles.y;
         
-        // calculate pitch with quadratic formula
-        bool canHitTarget = CalculatePitch(deltaPosition, out float pitch, out float flightTime);
-
-        if (canHitTarget)
-        {
-            cannon.AimAndFire(pitch, yaw);
-        }
+        var launchData = CalculateLaunchData(cannon.GetCannonBallSpawnTransform().position, targetPosition);
+        var pitch = Quaternion.LookRotation(launchData.initialVelocity, Vector3.up).eulerAngles.x;
+        cannon.AimAndFire(pitch, yaw, launchData.initialVelocity.magnitude);
     }
 
-    private bool CalculatePitch(Vector3 deltaPosition, out float pitch, out float flightTime)
+    private Balistics.LaunchData CalculateLaunchData(Vector3 startPosition, Vector3 endPosition)
     {
-        Ballistics.SolveBallisticPitch(deltaPosition.x, deltaPosition.y, 10, out float lowAngle, out float highAngle, out float lowTime, out float highTime);
-
-        if (-lowAngle >= CannonController.MinBarrelPitch && -lowAngle <= CannonController.MaxBarrelPitch)
-        {
-            pitch = -lowAngle;
-            flightTime = lowTime;
-            return true;
-        }
-        
-        if (-highAngle >= CannonController.MinBarrelPitch && -highAngle <= CannonController.MaxBarrelPitch)
-        {
-            pitch = -highAngle;
-            flightTime = highTime;
-            return true;
-        }
-
-        pitch = 0;
-        flightTime = 0;
-        return false;
+        var launchData = Balistics.CalculateLaunchData(endPosition, startPosition, -9.81f, true);
+        return launchData;
     }
 }

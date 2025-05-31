@@ -1,46 +1,50 @@
 using UnityEngine;
+using System.Collections;
 
-public static class Ballistics
+/// <summary>
+/// Copied and modified from: https://github.com/SebLague/Kinematic-Equation-Problems/blob/master/Kinematics%20problem%2002/Assets/Scripts/BallLauncher.cs
+/// https://www.youtube.com/@SebastianLague
+/// </summary>
+public static class Balistics 
 {
-    // Returns true if a valid ballistic arc exists.
-    // Outputs low/high pitch angles (in degrees) and corresponding flight times (in seconds).
-    public static bool SolveBallisticPitch(
-        float x, float y, float speed,
-        out float lowAngleDeg, out float highAngleDeg,
-        out float lowTime, out float highTime,
-        float gravity = 9.81f)
-    {
-        lowAngleDeg = highAngleDeg = 0f;
-        lowTime = highTime = 0f;
-
-        float v2 = speed * speed;
-        float v4 = v2 * v2;
-
-        float gx = gravity * x;
-
-        float discriminant = v4 - gravity * (gravity * x * x + 2 * y * v2);
-        if (discriminant < 0f)
+    public static LaunchData CalculateLaunchData(Vector3 targetPosition, Vector3 startPosition, float gravity, bool drawLine) {
+        float displacementY = targetPosition.y - startPosition.y;
+        Vector3 displacementXZ = new Vector3 (targetPosition.x - startPosition.x, 0, targetPosition.z - startPosition.z);
+        float time = Mathf.Sqrt(-2*startPosition.y/gravity) + Mathf.Sqrt(2*(displacementY - startPosition.y)/gravity);
+        Vector3 velocityY = Vector3.up * Mathf.Sqrt (-2 * gravity * startPosition.y);
+        Vector3 velocityXZ = displacementXZ / time;
+        
+        var launchData = new LaunchData(velocityXZ + velocityY * -Mathf.Sign(gravity), time); 
+        if (drawLine)
         {
-            // No solution: target unreachable at this speed
-            return false;
+            DrawPath(startPosition, launchData, gravity);
         }
 
-        float sqrt = Mathf.Sqrt(discriminant);
+        return launchData;
+    }
 
-        float angle1Rad = Mathf.Atan((v2 + sqrt) / gx);
-        float angle2Rad = Mathf.Atan((v2 - sqrt) / gx);
+    private static void DrawPath(Vector3 startPosition, LaunchData launchData, float gravity) {
+        Vector3 previousDrawPoint = startPosition;
 
-        // Sort so that angle1 is the lower angle
-        float thetaLow = Mathf.Min(angle1Rad, angle2Rad);
-        float thetaHigh = Mathf.Max(angle1Rad, angle2Rad);
+        int resolution = 30;
+        for (int i = 1; i <= resolution; i++) {
+            float simulationTime = i / (float)resolution * launchData.timeToTarget;
+            Vector3 displacement = launchData.initialVelocity * simulationTime + Vector3.up *gravity * simulationTime * simulationTime / 2f;
+            Vector3 drawPoint = startPosition + displacement;
+            Debug.DrawLine (previousDrawPoint, drawPoint, Color.green);
+            previousDrawPoint = drawPoint;
+        }
+    }
 
-        lowAngleDeg = thetaLow * Mathf.Rad2Deg;
-        highAngleDeg = thetaHigh * Mathf.Rad2Deg;
+    public struct LaunchData {
+        public readonly Vector3 initialVelocity;
+        public readonly float timeToTarget;
 
-        // Time = horizontal distance / horizontal velocity component
-        lowTime = x / (speed * Mathf.Cos(thetaLow));
-        highTime = x / (speed * Mathf.Cos(thetaHigh));
-
-        return true;
+        public LaunchData (Vector3 initialVelocity, float timeToTarget)
+        {
+            this.initialVelocity = initialVelocity;
+            this.timeToTarget = timeToTarget;
+        }
+		
     }
 }

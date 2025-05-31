@@ -78,9 +78,10 @@ public class CannonController : MonoBehaviour
 
     public Transform GetCannonBallSpawnTransform() => cannonBallSpawnTransform;
     
-    public void AimAndFire(float pitch, float yaw)
+    public void AimAndFire(float pitch, float yaw, float launchSpeed)
     {
         desiredBarrelPitch = pitch;
         desiredPlatformYaw = yaw;
+        muzzleSpeed = launchSpeed;
     }
 }
