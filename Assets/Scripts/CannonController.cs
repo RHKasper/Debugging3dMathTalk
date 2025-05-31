@@ -10,6 +10,8 @@ public class CannonController : MonoBehaviour
     public float muzzleSpeed = 20;
     public float aimingDuration = 1.5f;
     public float fireDelay = 1f;
+    public float barrelPitchSpeed = 10f;
+    public float platformYawSpeed = 10f;
     
     [Header("External Refs")]
     [SerializeField] private Rigidbody cannonBallPrefab;
@@ -21,8 +23,6 @@ public class CannonController : MonoBehaviour
     private bool _waitingToShoot;
     private float _latestDesiredBarrelPitch;
     private float _latestDesiredPlatformYaw;
-    private float _latestStartBarrelPitch;
-    private float _latestStartPlatformYaw;
     private float _elapsedAimTime;
     
     bool DesiredPitchChangedThisFrame => Mathf.Abs(desiredBarrelPitch - _latestDesiredBarrelPitch) > 0.01f;
@@ -35,8 +35,6 @@ public class CannonController : MonoBehaviour
         SetCannonYaw(desiredPlatformYaw);
         _latestDesiredBarrelPitch = desiredBarrelPitch;
         _latestDesiredPlatformYaw = desiredPlatformYaw;
-        _latestStartBarrelPitch = desiredBarrelPitch;
-        _latestStartPlatformYaw = desiredPlatformYaw;
     }
 
     // Update is called once per frame
@@ -44,19 +42,20 @@ public class CannonController : MonoBehaviour
     {
         if (DesiredPitchChangedThisFrame || DesiredYawChangedThisFrame)
         {
-            _waitingToShoot = true;
-            
             _latestDesiredBarrelPitch = desiredBarrelPitch;
             _latestDesiredPlatformYaw = desiredPlatformYaw;
-            _latestStartBarrelPitch = barrelSwivelTransform.localEulerAngles.x;
-            _latestStartPlatformYaw = transform.localEulerAngles.y;
-            _elapsedAimTime = 0;
+            
+            if (!_waitingToShoot)
+            {
+                _waitingToShoot = true;
+                _elapsedAimTime = 0;
+            }
         }
 
         if (_waitingToShoot)
         {
-            SetBarrelPitch(Mathf.LerpAngle(_latestStartBarrelPitch, _latestDesiredBarrelPitch, Mathf.Clamp01(_elapsedAimTime / aimingDuration)));
-            SetCannonYaw(Mathf.LerpAngle(_latestStartPlatformYaw, _latestDesiredPlatformYaw, Mathf.Clamp01(_elapsedAimTime / aimingDuration)));
+            SetBarrelPitch(Mathf.LerpAngle(barrelSwivelTransform.localEulerAngles.x, _latestDesiredBarrelPitch, Mathf.Clamp01(Time.deltaTime * barrelPitchSpeed)));
+            SetCannonYaw(Mathf.LerpAngle(transform.localEulerAngles.y, _latestDesiredPlatformYaw, Mathf.Clamp01(Time.deltaTime * platformYawSpeed)));
 
             if (_elapsedAimTime >= aimingDuration + fireDelay)
             {
