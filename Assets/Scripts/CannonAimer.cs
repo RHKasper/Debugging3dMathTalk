@@ -35,37 +35,40 @@ public class CannonAimer : MonoBehaviour
         {
             targetPosition = target.transform.position;
         }
-
-        // calculate yaw
-        float yaw = Quaternion.LookRotation(targetPosition - cannon.transform.position, Vector3.up).eulerAngles.y;
         
-        // calculate pitch and launch speed
-        (float pitch, float launchSpeed) = CalculatePitchAndLaunchSpeed(cannon.GetCannonBallSpawnTransform().position, targetPosition);
+        // calculate pitch, yaw, and launch speed
+        (float pitch, float yaw, float launchSpeed) = CalculatePitchAndLaunchSpeed(cannon.GetCannonBallSpawnTransform().position, targetPosition);
         
         // fire cannon
         cannon.AimAndFire(pitch, yaw, launchSpeed);
     }
 
-    private (float pitch, float launchSpeed) CalculatePitchAndLaunchSpeed(Vector3 startPosition, Vector3 endPosition)
+    private (float pitch, float yaw, float launchSpeed) CalculatePitchAndLaunchSpeed(Vector3 launchPosition, Vector3 endPosition)
     {
         Balistics.LaunchData launchData;
+        float yaw;
 
         if (staticTarget)
         {
-            Balistics.LaunchData staticTargetLaunchData = CalculateLaunchData(startPosition, endPosition);
-            launchData = staticTargetLaunchData;
+            launchData = CalculateLaunchData(launchPosition, endPosition);
+            yaw = Quaternion.LookRotation(endPosition - cannon.transform.position, Vector3.up).eulerAngles.y;;
         }
         else
         {
             // lead the target
+            Balistics.LaunchData staticTargetLaunchData = CalculateLaunchData(launchPosition, endPosition);
+            float approxFlightTime = staticTargetLaunchData.timeToTarget;
             Vector3 velocity = target.GetVelocity();
-            launchData = CalculateLaunchData(startPosition + velocity, endPosition);
+            Vector3 predictedEndPosition = endPosition + approxFlightTime * velocity;
+            
+            launchData = CalculateLaunchData(launchPosition, predictedEndPosition);
+            yaw = Quaternion.LookRotation(predictedEndPosition - launchPosition, Vector3.up).eulerAngles.y;
         }
         
         float launchSpeed = launchData.initialVelocity.magnitude;
         float pitch = Quaternion.LookRotation(launchData.initialVelocity, Vector3.up).eulerAngles.x;
         
-        return (pitch, launchSpeed);
+        return (pitch, yaw, launchSpeed);
     }
     
     private Balistics.LaunchData CalculateLaunchData(Vector3 startPosition, Vector3 endPosition)

@@ -16,8 +16,8 @@ public class CannonController : MonoBehaviour
     
     public float muzzleSpeed = 20;
     public float aimingDuration = 1f;
-    public float barrelPitchSpeed = 10f;
-    public float platformYawSpeed = 10f;
+    public float barrelPitchSpeed = 100f;
+    public float platformYawSpeed = 100f;
     
     [Header("External Refs")]
     [SerializeField] private Rigidbody cannonBallPrefab;
@@ -52,8 +52,8 @@ public class CannonController : MonoBehaviour
         }
 
         
-        SetBarrelPitch(Mathf.LerpAngle(barrelSwivelTransform.localEulerAngles.x, _latestDesiredBarrelPitch, Mathf.Clamp01(Time.deltaTime * barrelPitchSpeed)));
-        SetCannonYaw(Mathf.LerpAngle(transform.localEulerAngles.y, _latestDesiredPlatformYaw, Mathf.Clamp01(Time.deltaTime * platformYawSpeed)));
+        SetBarrelPitch(_latestDesiredBarrelPitch);
+        SetCannonYaw(_latestDesiredPlatformYaw);
 
         if (_elapsedAimTime >= aimingDuration)
         {
