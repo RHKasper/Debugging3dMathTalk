@@ -8,6 +8,7 @@ public class CannonAimer : MonoBehaviour
     [SerializeField] private CannonController cannon;
     [SerializeField] private Transform target;
     [SerializeField] private bool aimAtMouse = true;
+    [SerializeField] private bool drawTrajectory = false;
     
     private LayerMask _layerMask;
 
@@ -40,7 +41,7 @@ public class CannonAimer : MonoBehaviour
 
     private Balistics.LaunchData CalculateLaunchData(Vector3 startPosition, Vector3 endPosition)
     {
-        var launchData = Balistics.CalculateLaunchData(endPosition, startPosition, -9.81f, true);
+        var launchData = Balistics.CalculateLaunchData(endPosition, startPosition, -9.81f, drawTrajectory);
         return launchData;
     }
 }
