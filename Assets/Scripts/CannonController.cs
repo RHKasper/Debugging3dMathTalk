@@ -25,36 +25,8 @@ public class CannonController : MonoBehaviour
     private float _latestStartPlatformYaw;
     private float _elapsedAimTime;
     
-    bool DesiredPitchChangedThisFrame
-    {
-        get
-        {
-            var delta = Mathf.Abs(desiredBarrelPitch - _latestDesiredBarrelPitch);
-            if (delta > 0.01f)
-            {
-                Debug.Log("Pitch delta: " + delta);
-                return true;
-            }
-
-            return false;
-        }
-    }
-
-    bool DesiredYawChangedThisFrame
-    {
-        get
-        {
-            var delta = Mathf.Abs(desiredPlatformYaw - _latestDesiredPlatformYaw);
-            if (delta > .01f)
-            {
-                Debug.Log("Yaw delta: " + delta);
-                return true;
-            }
-
-            return false;
-        }
-    }
-
+    bool DesiredPitchChangedThisFrame => Mathf.Abs(desiredBarrelPitch - _latestDesiredBarrelPitch) > 0.01f;
+    private bool DesiredYawChangedThisFrame => Mathf.Abs(desiredPlatformYaw - _latestDesiredPlatformYaw) > .01f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
