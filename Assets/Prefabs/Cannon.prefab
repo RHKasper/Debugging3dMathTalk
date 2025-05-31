@@ -121,6 +121,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5690222009559956063}
   - component: {fileID: 1315051685152247593}
+  - component: {fileID: 8387759203065320463}
   m_Layer: 0
   m_Name: Cannon
   m_TagString: Untagged
@@ -161,11 +162,24 @@ MonoBehaviour:
   desiredBarrelPitch: 0
   desiredPlatformYaw: 0
   muzzleSpeed: 20
-  aimingDuration: 1.5
-  fireDelay: 1
+  aimingDuration: 1
+  fireDelay: 0.25
   cannonBallPrefab: {fileID: 5083186613206829754, guid: d38f1b973e4cc39449ee1d777ff5774b, type: 3}
   barrelSwivelTransform: {fileID: 6346686364546917707}
   cannonBallSpawnTransform: {fileID: 8198264937015715714}
+--- !u!114 &8387759203065320463
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2360377059339909789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45256482c54d10049981175b6d0c7451, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cannon: {fileID: 1315051685152247593}
 --- !u!1 &3022441439054967432
 GameObject:
   m_ObjectHideFlags: 0

@@ -105,4 +105,12 @@ public class CannonController : MonoBehaviour
         cannonBall.transform.SetPositionAndRotation(cannonBallSpawnTransform.position, cannonBallSpawnTransform.rotation);
         cannonBall.linearVelocity = cannonBallSpawnTransform.forward * muzzleSpeed;
     }
+
+    public Transform GetCannonBallSpawnTransform() => cannonBallSpawnTransform;
+    
+    public void AimAndFire(float pitch, float yaw)
+    {
+        desiredBarrelPitch = pitch;
+        desiredPlatformYaw = yaw;
+    }
 }
