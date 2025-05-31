@@ -2,6 +2,12 @@ using UnityEngine;
 
 public class CannonController : MonoBehaviour
 {
+    public const float MinBarrelPitch = -89;
+    public const float MaxBarrelPitch = 15;
+    public const float MinPlatformYaw = -110;
+    public const float MaxPlatformYaw = 110;
+    
+    
     [Header("Settings")]
     [Range(-89, 15)]
     public float desiredBarrelPitch = 0f;

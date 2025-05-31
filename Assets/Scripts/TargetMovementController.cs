@@ -26,10 +26,11 @@ public class TargetMovementController : MonoBehaviour
         if (_timeElapsed >= moveDuration + endPauseDuration)
         {
             _timeElapsed = 0;
-            _endPosition = _startPosition;
-            _startPosition = transform.position;
+            transform.position = _startPosition;
         }
-        
-        _timeElapsed += Time.deltaTime;
+        else
+        {
+            _timeElapsed += Time.deltaTime;            
+        }
     }
 }

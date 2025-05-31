@@ -24,6 +24,34 @@ public class CannonAimer : MonoBehaviour
         float yaw = Quaternion.LookRotation(target.position - cannon.transform.position, Vector3.up).eulerAngles.y;
         
         // calculate pitch with quadratic formula
-        cannon.AimAndFire(-20, yaw);
+        bool canHitTarget = CalculatePitch(deltaPosition, out float pitch, out float flightTime);
+
+        if (canHitTarget)
+        {
+            cannon.AimAndFire(pitch, yaw);
+        }
+    }
+
+    private bool CalculatePitch(Vector3 deltaPosition, out float pitch, out float flightTime)
+    {
+        Ballistics.SolveBallisticPitch(deltaPosition.x, deltaPosition.y, 10, out float lowAngle, out float highAngle, out float lowTime, out float highTime);
+
+        if (-lowAngle >= CannonController.MinBarrelPitch && -lowAngle <= CannonController.MaxBarrelPitch)
+        {
+            pitch = -lowAngle;
+            flightTime = lowTime;
+            return true;
+        }
+        
+        if (-highAngle >= CannonController.MinBarrelPitch && -highAngle <= CannonController.MaxBarrelPitch)
+        {
+            pitch = -highAngle;
+            flightTime = highTime;
+            return true;
+        }
+
+        pitch = 0;
+        flightTime = 0;
+        return false;
     }
 }
