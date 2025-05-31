@@ -56,10 +56,9 @@ public class CannonAimer : MonoBehaviour
         else
         {
             // lead the target
-            Balistics.LaunchData staticTargetLaunchData = CalculateLaunchData(launchPosition, endPosition);
-            float approxFlightTime = staticTargetLaunchData.timeToTarget;
             Vector3 velocity = target.GetVelocity();
-            Vector3 predictedEndPosition = endPosition + approxFlightTime * velocity;
+            Vector3 predictedEndPosition = endPosition + velocity;
+            Debug.DrawLine(endPosition, predictedEndPosition, Color.red);
             
             launchData = CalculateLaunchData(launchPosition, predictedEndPosition);
             yaw = Quaternion.LookRotation(predictedEndPosition - launchPosition, Vector3.up).eulerAngles.y;
