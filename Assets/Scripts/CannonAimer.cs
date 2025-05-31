@@ -7,6 +7,7 @@ public class CannonAimer : MonoBehaviour
     [SerializeField] private new Camera camera;
     [SerializeField] private CannonController cannon;
     [SerializeField] private Transform target;
+    [SerializeField] private bool aimAtMouse = true;
     
     private LayerMask _layerMask;
 
@@ -18,10 +19,17 @@ public class CannonAimer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Physics.Raycast(camera.ScreenPointToRay(Mouse.current.position.ReadValue()), out var hit, 1000, _layerMask);
-        Vector3 targetPosition = hit.point;
-        Vector3 deltaPosition = cannon.GetCannonBallSpawnTransform().position - targetPosition;
-        
+        Vector3 targetPosition;
+        if (aimAtMouse)
+        {
+            Physics.Raycast(camera.ScreenPointToRay(Mouse.current.position.ReadValue()), out var hit, 1000, _layerMask);
+            targetPosition = hit.point;
+        }
+        else
+        {
+            targetPosition = target.position;
+        }
+
         // calculate yaw
         float yaw = Quaternion.LookRotation(targetPosition - cannon.transform.position, Vector3.up).eulerAngles.y;
         
