@@ -37,40 +37,41 @@ public class CannonAimer : MonoBehaviour
         }
         
         // calculate pitch, yaw, and launch speed
-        (float pitch, float yaw, float launchSpeed) = CalculatePitchAndLaunchSpeed(cannon.GetCannonBallSpawnTransform().position, targetPosition);
+        (float pitch, float yaw, float launchSpeed) = CalculateAnglesAndLaunchSpeed(cannon.GetCannonBallSpawnTransform().position, targetPosition);
         
         // fire cannon
         cannon.AimAndFire(pitch, yaw, launchSpeed);
     }
-
-    private (float pitch, float yaw, float launchSpeed) CalculatePitchAndLaunchSpeed(Vector3 launchPosition, Vector3 endPosition)
+    
+    // Look at me!!
+    private (float pitch, float yaw, float launchSpeed) CalculateAnglesAndLaunchSpeed(Vector3 launchPosition, Vector3 targetPosition)
     {
-        Balistics.LaunchData launchData;
-        float yaw;
+        Balistics.LaunchData launchData; // initial velocity and air-time 
+        float leftRightAim; // yaw
 
         if (staticTarget)
         {
-            launchData = CalculateLaunchData(launchPosition, endPosition);
-            yaw = Quaternion.LookRotation(endPosition - cannon.transform.position, Vector3.up).eulerAngles.y;;
+            launchData = ComputeLaunchDataForStaticTarget(launchPosition, targetPosition);
+            leftRightAim = Quaternion.LookRotation(targetPosition - cannon.transform.position, Vector3.up).eulerAngles.y;
         }
         else
         {
             // lead the target
             Vector3 velocity = target.GetVelocity();
-            Vector3 predictedEndPosition = endPosition + velocity;
-            Debug.DrawLine(endPosition, predictedEndPosition, Color.red);
+            Vector3 predictedHitPosition = targetPosition + velocity;
+            Debug.DrawLine(targetPosition, predictedHitPosition, Color.red);
             
-            launchData = CalculateLaunchData(launchPosition, predictedEndPosition);
-            yaw = Quaternion.LookRotation(predictedEndPosition - launchPosition, Vector3.up).eulerAngles.y;
+            launchData = ComputeLaunchDataForStaticTarget(launchPosition, predictedHitPosition);
+            leftRightAim = Quaternion.LookRotation(predictedHitPosition - launchPosition, Vector3.up).eulerAngles.y;
         }
         
         float launchSpeed = launchData.initialVelocity.magnitude;
         float pitch = Quaternion.LookRotation(launchData.initialVelocity, Vector3.up).eulerAngles.x;
         
-        return (pitch, yaw, launchSpeed);
+        return (pitch, leftRightAim, launchSpeed);
     }
     
-    private Balistics.LaunchData CalculateLaunchData(Vector3 startPosition, Vector3 endPosition)
+    private Balistics.LaunchData ComputeLaunchDataForStaticTarget(Vector3 startPosition, Vector3 endPosition)
     {
         var launchData = Balistics.CalculateLaunchData(endPosition, startPosition, -9.81f, drawTrajectory);
         return launchData;
